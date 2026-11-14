@@ -36,15 +36,22 @@ function slugify(s) {
     .slice(0, 80);
 }
 
+// Notion API 2025-09-03+: databases are queried through their data sources.
+const database = await notion.databases.retrieve({ database_id: databaseId });
+const dataSourceId = database.data_sources?.[0]?.id;
+if (!dataSourceId) {
+  throw new Error(`No data source found for database ${databaseId}`);
+}
+
 const pages = [];
 let cursor;
 do {
-  const res = await notion.databases.query({
-    database_id: databaseId,
+  const res = await notion.dataSources.query({
+    data_source_id: dataSourceId,
     start_cursor: cursor,
     filter: { property: 'Public', checkbox: { equals: true } },
   });
-  pages.push(...res.results);
+  pages.push(...res.results.filter((r) => r.object === 'page'));
   cursor = res.has_more ? res.next_cursor : undefined;
 } while (cursor);
 
