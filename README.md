@@ -6,7 +6,6 @@ English-only Tonmeister site for ensembles and soloists. Built with Astro, publi
 
 - Notion database **Productions** (source of truth): https://www.notion.so/418c74f68d3081dba87ac9321202a50d
 - Seed fallback: `src/data/productions.json`
-- Concept lock: `docs/CONCEPT.md`
 
 ## Local
 
@@ -35,5 +34,3 @@ node scripts/migrate-seed-to-notion.mjs
 ## Deploy
 
 GitHub Actions workflow `.github/workflows/publish.yml` builds nightly and on push to `main`, then deploys to Pages.
-
-See `docs/CUTOVER.md` and `docs/INSTAGRAM.md`.
