@@ -1,0 +1,72 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getAllProductions, getProduction } from '../../lib/productions';
+
+export function getStaticPaths() {
+  return getAllProductions().map((production) => ({
+    params: { slug: production.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const production = getProduction(slug!);
+if (!production) {
+  throw new Error(`Missing production ${slug}`);
+}
+
+const meta = [production.type, production.year, production.roles.join(' · ')].filter(Boolean).join(' · ');
+---
+<BaseLayout
+  title={`${production.title} · Christoph Rönnecke`}
+  description={production.shortText}
+  path={`/work/${production.slug}/`}
+>
+  <section class="section">
+    <div class="wrap" style="display:grid;gap:2rem;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start">
+      <div class="card__cover" style="aspect-ratio:1;min-height:280px">
+        {production.coverUrl ? (
+          <img src={production.coverUrl} alt="" />
+        ) : (
+          <span>{production.title}</span>
+        )}
+      </div>
+      <div class="prose">
+        <p class="card__meta">{meta}</p>
+        <h1>{production.title}</h1>
+        <p><strong style="color:var(--fg)">{production.client}</strong></p>
+        {production.ensemble && <p>Ensemble: {production.ensemble}</p>}
+        {production.soloists && <p>Soloists: {production.soloists}</p>}
+        {production.conductor && <p>Conductor: {production.conductor}</p>}
+        <p>{production.shortText}</p>
+        <div class="cta-row">
+          {production.listenUrl && (
+            <a class="btn btn--primary" href={production.listenUrl} rel="noopener" target="_blank">Listen</a>
+          )}
+          {production.infoUrl && (
+            <a class="btn btn--ghost" href={production.infoUrl} rel="noopener" target="_blank">More info</a>
+          )}
+          <a class="btn btn--ghost" href="/work/">Back to archive</a>
+        </div>
+
+        {production.listenUrl && production.listenUrl.includes('spotify.com') && (
+          <div
+            class="embed-slot"
+            style="margin-top:1.4rem"
+            data-embed-src={`https://open.spotify.com/embed/track/${production.listenUrl.split('/').pop()?.split('?')[0]}`}
+            data-embed-title={`Spotify: ${production.title}`}
+          >
+            <span>Accept media cookies to load Spotify.</span>
+          </div>
+        )}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  @media (max-width: 860px) {
+    .wrap[style] {
+      grid-template-columns: 1fr !important;
+    }
+  }
+</style>

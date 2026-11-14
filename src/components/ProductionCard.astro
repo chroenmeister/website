@@ -1,0 +1,21 @@
+---
+import type { Production } from '../lib/productions';
+
+type Props = { production: Production };
+const { production } = Astro.props;
+const meta = [production.type, production.year].filter(Boolean).join(' · ');
+---
+<a class="card" href={`/work/${production.slug}/`}>
+  <div class="card__cover">
+    {production.coverUrl ? (
+      <img src={production.coverUrl} alt="" loading="lazy" />
+    ) : (
+      <span>{production.title}</span>
+    )}
+  </div>
+  <div class="card__body">
+    <div class="card__meta">{meta}</div>
+    <h3>{production.title}</h3>
+    <p>{production.client}</p>
+  </div>
+</a>

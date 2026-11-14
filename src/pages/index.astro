@@ -1,0 +1,147 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProductionCard from '../components/ProductionCard.astro';
+import { getHomepageProductions } from '../lib/productions';
+import igSeed from '../data/instagram.json';
+
+const featured = getHomepageProductions();
+const posts = (igSeed as { id: string; permalink: string; caption?: string; localPath?: string }[]).slice(0, 8);
+---
+<BaseLayout title="Christoph Rönnecke · Tonmeister in Leipzig">
+  <section class="hero">
+    <div class="hero__media" aria-hidden="true">
+      <video
+        autoplay
+        muted
+        loop
+        playsinline
+        poster="/media/hero.jpg"
+        preload="metadata"
+      >
+        <source src="/media/hero.webm" type="video/webm" />
+        <source src="/media/hero.mp4" type="video/mp4" />
+      </video>
+      <div class="hero__shade"></div>
+    </div>
+    <div class="wrap hero__content">
+      <p class="hero__eyebrow">Tonmeister · Leipzig</p>
+      <h1>Broadcast quality for chamber music and song.</h1>
+      <p class="hero__lead">
+        I record, produce and finish acoustic music — from the first funding conversation to the finished release —
+        with the discipline of MDR Klassik and rbb radio3, and the attention of a working musician.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn--primary" href="/contact/">Request a quote</a>
+        <a class="btn btn--ghost" href="/work/">Listen to recent work</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section__head">
+        <div>
+          <h2>Selected productions</h2>
+          <p>Newest work first. At most two broadcast projects on the homepage so ensemble releases stay visible.</p>
+        </div>
+        <a href="/work/">Full archive →</a>
+      </div>
+      <div class="grid">
+        {featured.map((production) => <ProductionCard production={production} />)}
+      </div>
+      <p class="trust" style="margin-top:1.8rem">
+        <strong>Trusted by</strong>
+        <span>MDR Klassik</span>
+        <span>radio3 / rbb</span>
+        <span>Elisabeth Leonskaja</span>
+        <span>Staatskapelle Weimar</span>
+        <span>Anne Schwanewilms</span>
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section__head">
+        <div>
+          <h2>How a production works</h2>
+          <p>One path from idea to release — not seven service tiles.</p>
+        </div>
+      </div>
+      <div class="phases">
+        <article class="phase">
+          <h3>1. Prepare</h3>
+          <ol>
+            <li>Venue and schedule</li>
+            <li>Funding applications</li>
+            <li>Label and distribution</li>
+          </ol>
+        </article>
+        <article class="phase">
+          <h3>2. Record</h3>
+          <ol>
+            <li>On-site recording with own equipment</li>
+            <li>Musical production from the score</li>
+            <li>Video with trusted partners</li>
+            <li>Concert capture and livestream</li>
+          </ol>
+        </article>
+        <article class="phase">
+          <h3>3. Finish</h3>
+          <ol>
+            <li>Editing and mixing</li>
+            <li>Dolby Atmos where it serves the music</li>
+            <li>Mastering for release</li>
+          </ol>
+        </article>
+      </div>
+      <div class="cta-row">
+        <a class="btn btn--ghost" href="/contact/">Quote within 48 hours</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section__head">
+        <div>
+          <h2>Recently on Instagram</h2>
+          <p>A compact life-sign from the studio and the hall. Full feed on Instagram.</p>
+        </div>
+        <a href="https://www.instagram.com/tonmeister.roennecke/" rel="noopener" target="_blank">@tonmeister.roennecke →</a>
+      </div>
+      {posts.length > 0 ? (
+        <div class="ig-strip">
+          {posts.map((post) => (
+            <a href={post.permalink} rel="noopener" target="_blank" title={post.caption || 'Instagram'}>
+              {post.localPath ? (
+                <img src={post.localPath} alt="" loading="lazy" />
+              ) : (
+                <div class="card__cover" style="aspect-ratio:1;font-size:0.8rem;padding:0.5rem">IG</div>
+              )}
+            </a>
+          ))}
+        </div>
+      ) : (
+        <p>
+          Instagram feed will appear here after the Meta app token is configured.
+          Until then: <a href="https://www.instagram.com/tonmeister.roennecke/" rel="noopener" target="_blank">@tonmeister.roennecke</a>
+        </p>
+      )}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <h2>Ready when you are</h2>
+      <p>
+        Tell me the ensemble, repertoire, dates, venue and planned release.
+        You receive a clear offer within 48 hours.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn--primary" href="mailto:info@roennecke.eu?subject=Recording%20enquiry">Email info@roennecke.eu</a>
+        <a class="btn btn--ghost" href="/contact/">Enquiry checklist</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

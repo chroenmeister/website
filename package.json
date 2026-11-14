@@ -1,0 +1,25 @@
+{
+  "name": "website",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.23.4"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "sync:notion": "node scripts/sync-notion.mjs",
+    "sync:instagram": "node scripts/sync-instagram.mjs",
+    "check:links": "node scripts/check-links.mjs",
+    "prebuild": "node scripts/check-links.mjs",
+    "sync:all": "node scripts/sync-notion.mjs && node scripts/sync-instagram.mjs && node scripts/check-links.mjs"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.5",
+    "@notionhq/client": "^5.31.1",
+    "astro": "^7.4.12",
+    "sharp": "^0.35.5"
+  }
+}

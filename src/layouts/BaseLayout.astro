@@ -1,0 +1,125 @@
+---
+import '../styles/global.css';
+
+type Props = {
+  title: string;
+  description?: string;
+  path?: string;
+};
+
+const {
+  title,
+  description = 'Tonmeister in Leipzig for acoustic music recording, musical production and post-production.',
+  path = '/',
+} = Astro.props;
+
+const canonical = new URL(path, Astro.site).toString();
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL('/media/hero.jpg', Astro.site).toString()} />
+    <link rel="icon" href="/logo/logo.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrap site-header__inner">
+        <a class="brand" href="/">
+          <img src="/logo/logo.svg" alt="" width="28" height="28" />
+          <span>Christoph Rönnecke</span>
+        </a>
+        <nav class="nav" aria-label="Primary">
+          <a href="/work/">Work</a>
+          <a href="/about/">About</a>
+          <a href="/contact/">Contact</a>
+          <a href="/impressum/">Impressum</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap site-footer__inner">
+        <div>
+          <strong>Christoph Rönnecke</strong> · Tonmeister · Leipzig<br />
+          <a href="mailto:info@roennecke.eu">info@roennecke.eu</a>
+          ·
+          <a href="tel:+4917624773361">+49 176 24773361</a>
+        </div>
+        <div>
+          <a href="https://www.instagram.com/tonmeister.roennecke/" rel="noopener" target="_blank">Instagram</a>
+          ·
+          <a href="/privacy/">Privacy</a>
+          ·
+          <a href="/impressum/">Impressum</a>
+        </div>
+      </div>
+    </footer>
+
+    <div class="consent-banner" id="consent-banner" role="dialog" aria-live="polite" aria-label="Cookie consent">
+      <p>
+        External media (Spotify, YouTube, MDR Audiothek) and some cover images load from third-party servers.
+        Accept to enable embeds.
+      </p>
+      <div class="cta-row">
+        <button class="btn btn--primary" type="button" id="consent-accept">Accept</button>
+        <button class="btn btn--ghost" type="button" id="consent-decline">Decline</button>
+      </div>
+    </div>
+
+    <script>
+      const KEY = 'cr-consent-v1';
+      const banner = document.getElementById('consent-banner');
+      const accept = document.getElementById('consent-accept');
+      const decline = document.getElementById('consent-decline');
+
+      function applyConsent(value: string | null) {
+        document.documentElement.dataset.consent = value === 'accepted' ? 'accepted' : 'declined';
+        document.querySelectorAll<HTMLElement>('[data-embed-src]').forEach((el) => {
+          if (value !== 'accepted') return;
+          if (el.dataset.loaded === '1') return;
+          const src = el.dataset.embedSrc;
+          if (!src) return;
+          const iframe = document.createElement('iframe');
+          iframe.src = src;
+          iframe.loading = 'lazy';
+          iframe.allow = 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture';
+          iframe.title = el.dataset.embedTitle || 'Embedded media';
+          el.replaceChildren(iframe);
+          el.dataset.loaded = '1';
+        });
+      }
+
+      const stored = localStorage.getItem(KEY);
+      if (!stored) {
+        banner?.classList.add('is-visible');
+      } else {
+        applyConsent(stored);
+      }
+
+      accept?.addEventListener('click', () => {
+        localStorage.setItem(KEY, 'accepted');
+        banner?.classList.remove('is-visible');
+        applyConsent('accepted');
+      });
+
+      decline?.addEventListener('click', () => {
+        localStorage.setItem(KEY, 'declined');
+        banner?.classList.remove('is-visible');
+        applyConsent('declined');
+      });
+    </script>
+  </body>
+</html>

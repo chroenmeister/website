@@ -1,0 +1,61 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProductionCard from '../../components/ProductionCard.astro';
+import { getAllProductions, uniqueValues } from '../../lib/productions';
+
+const productions = getAllProductions();
+const types = uniqueValues('type');
+const years = uniqueValues('year');
+---
+<BaseLayout title="Work · Christoph Rönnecke" path="/work/" description="Archive of recordings, broadcast productions, video and livestreams.">
+  <section class="section">
+    <div class="wrap">
+      <div class="section__head">
+        <div>
+          <h1>Work</h1>
+          <p>Filter by type or year. Roles and listening links live on each production page.</p>
+        </div>
+      </div>
+
+      <div class="filters" data-filters>
+        <button class="chip is-active" type="button" data-filter="all">All</button>
+        {types.map((type) => (
+          <button class="chip" type="button" data-filter={`type:${type}`}>{type}</button>
+        ))}
+        {years.map((year) => (
+          <button class="chip" type="button" data-filter={`year:${year}`}>{year}</button>
+        ))}
+      </div>
+
+      <div class="grid" data-grid>
+        {productions.map((production) => (
+          <div data-item data-type={production.type} data-year={production.year || ''}>
+            <ProductionCard production={production} />
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const buttons = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
+    const items = document.querySelectorAll<HTMLElement>('[data-item]');
+
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => {
+        buttons.forEach((b) => b.classList.remove('is-active'));
+        button.classList.add('is-active');
+        const filter = button.dataset.filter || 'all';
+        items.forEach((item) => {
+          if (filter === 'all') {
+            item.hidden = false;
+            return;
+          }
+          const [key, value] = filter.split(':');
+          const match = key === 'type' ? item.dataset.type === value : item.dataset.year === value;
+          item.hidden = !match;
+        });
+      });
+    });
+  </script>
+</BaseLayout>
